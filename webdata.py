@@ -11,3 +11,4 @@ for count, line in enumerate(lines):
 		adlref = count
 
 print ("current weather in %s: %s and %s" % (lines[adlref][0], lines[adlref][6], lines[adlref][7].lower()))
+input("press enter to close window.")
