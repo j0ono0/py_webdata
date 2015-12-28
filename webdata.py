@@ -2,6 +2,7 @@
 
 import urllib.request
 import xml.etree.ElementTree as ET
+import time
 
 def weather_adelaide():
 	response = urllib.request.urlopen('ftp://ftp2.bom.gov.au/anon/gen/fwo/IDA00100.dat')
@@ -11,9 +12,10 @@ def weather_adelaide():
 		lines[count] = line.split("#")
 		if lines[count][0] == "Adelaide":
 			adlref = count
-	print ("Current weather in %s: %s and %s" % (lines[adlref][0], lines[adlref][6], lines[adlref][7].lower()))
+	forcasttime = time.strptime(lines[adlref][2],"%Y%m%d")
+	forcasttimestr = time.strftime("%d/%m/%y",forcasttime)
+	print ("Forecast weather in %s on %s: %s and %s" % (lines[adlref][0],forcasttimestr, lines[adlref][6], lines[adlref][7].lower()))
 
-	
 def news_just_in():
 	response = urllib.request.urlopen('http://www.abc.net.au/news/feed/51120/rss.xml')
 	tree = ET.parse(response)
