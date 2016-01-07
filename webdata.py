@@ -3,6 +3,8 @@
 import urllib.request
 import xml.etree.ElementTree as ET
 import time
+from bs4 import BeautifulSoup
+import re
 
 def weather_adelaide():
 	response = urllib.request.urlopen('ftp://ftp2.bom.gov.au/anon/gen/fwo/IDA00100.dat')
@@ -28,9 +30,39 @@ def news_just_in():
 	for i in range(10):
 		print('%d: %s' %(i+1,titles[i]))
 
+def scrapepage(url):
+
+	def getKey(item):
+		return item[1]
+		
+	response = urllib.request.urlopen(url)
+	data = response.read()
+	soup = BeautifulSoup(data,'html.parser')
+	text = re.sub('\W',' ',soup.get_text())
+	text = re.sub(" {2,}", " ", text)
+	lst = text.split(" ")
+	words = {}
+	for word in lst:
+		word = word.lower()
+		if word in words.keys():
+			words[word] += 1
+		else:
+			words[word] = 1
+	print("unique word count: ", len(words))
+	wordlst = words.items()
+	wordlst = sorted(wordlst, key = getKey, reverse = True)
+	
+	file = open('page-analysis.txt', 'w')
+	file.write("%s different word on the page</br>" % len(wordlst))
+	for entry in wordlst:
+		file.write("%s: %s\r\n" %(entry[1],entry[0]))
+	file.close()
+		
 print("------------------")
-news_just_in()
+# news_just_in()
 print("------------------")
-weather_adelaide()
+# weather_adelaide()
 print("------------------")
+url = input("enter URL to analyse: ")
+scrapepage(url)
 input("press enter to end script.")
