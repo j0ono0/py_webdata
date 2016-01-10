@@ -31,15 +31,21 @@ def news_just_in():
 		print('%d: %s' %(i+1,titles[i]))
 
 def scrapepage(url):
-
 	def getKey(item):
 		return item[1]
-		
+	def validateurl(url):
+		if url[0:7] != 'http://' and url[0:8] != 'https://':
+			url = 'http://' + url
+		return url	
+	
+	url = validateurl(url)
+	print("retrieving page from %s..." % url)
 	response = urllib.request.urlopen(url)
 	data = response.read()
 	soup = BeautifulSoup(data,'html.parser')
-	text = re.sub('\W',' ',soup.get_text())
-	text = re.sub(" {2,}", " ", text)
+	[tag.extract() for tag in soup(['head','script'])]
+	text = re.sub('\W', ' ', soup.get_text(' '))
+	text = re.sub(" {1,}", " ", text)
 	lst = text.split(" ")
 	words = {}
 	for word in lst:
@@ -53,9 +59,9 @@ def scrapepage(url):
 	wordlst = sorted(wordlst, key = getKey, reverse = True)
 	
 	file = open('page-analysis.txt', 'w')
-	file.write("%s different word on the page</br>" % len(wordlst))
+	file.write("%s different word on the page\n" % len(wordlst))
 	for entry in wordlst:
-		file.write("%s: %s\r\n" %(entry[1],entry[0]))
+		file.write("%s: %s\n" %(entry[1],entry[0]))
 	file.close()
 		
 print("------------------")
