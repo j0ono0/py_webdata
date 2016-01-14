@@ -3,55 +3,72 @@
 import urllib.request
 from bs4 import BeautifulSoup
 import re
+import pickle
+import os
 
-def getKey(item):
-	return item[1]
-
-def validated_url(url):
+# Return HTML page as BeautifulSoup obj
+def loadpage(url):
 	if url[0:7] != 'http://' and url[0:8] != 'https://':
 		url = 'http://' + url
-	return url
-
-def loadpage(url):
-	url = validated_url(url)
 	response = urllib.request.urlopen(url)
-	return response.read()
+	return BeautifulSoup(response.read(),'html.parser')
+	
+def save_report(text,filename):
+	filename += '.txt'
+	cwd = os.getcwd()
+	dir = os.path.join(cwd,"reports")
+	filepath = os.path.join(dir,filename)
 
-def list_words(page):
-	soup = BeautifulSoup(page,'html.parser')
+	if not os.path.exists(dir):
+		os.makedirs(dir)
+	with open(filepath,'w') as f:
+		f.write(text)
+	print('Report created: %s' % filename)
+
+	
+def total_word_count(soup):
+	return
+	
+def list_words(soup):
+# return a list of all words that *display* on the webpage
 	[tag.extract() for tag in soup(['head','script'])]
 	text = re.sub('\W', ' ', soup.get_text(' '))
 	text = re.sub(" {1,}", " ", text)
 	return text.split(" ")	
 	
-def unique_words(page):
-	wordlst = list_words(page)
+# aid with sorting list of tuples
+def getKey(item):
+	return item[1]
+
+def unique_word_report(soup):
+	wordlst = list_words(soup)
 	worddict = {}
+	output = "Unique word report\n------------------\r\n"
+
 	for word in wordlst:
 		word = word.lower()
 		if word in worddict.keys():
 			worddict[word] += 1
 		else:
 			worddict[word] = 1
-	print("unique word count: ", len(worddict))
-	return worddict
+	
+	output += "Total unique word count: %s\r\n" % len(worddict)
+	
+	tuplelst = worddict.items()
+	tuplelst = sorted(tuplelst, key = getKey, reverse = True)
+	for entry in tuplelst:
+		output += "%s: %s\n" %(entry[1],entry[0])
 
-def dict_to_file(data,file_name):
-	#convert dict to lsit of tuples and sort
-	wordlst = data.items()
-	wordlst = sorted(wordlst, key = getKey, reverse = True)
-	#output to file
-	file = open(file_name, 'w')
-	file.write("%s Number of entries: \n" % len(wordlst))
-	for entry in wordlst:
-		file.write("%s: %s\n" %(entry[1],entry[0]))
-	file.close()
-	print("data written to: %s" % file_name)
+	return output
 
+# Setup
 url = input("enter URL to analyse: ")
-#scrapepage(url)
-page = loadpage(url)
-unique_words = unique_words(page)
-dict_to_file(unique_words,'unique-words.txt')
+report = "Web page report: %s\n" % url
+soup = loadpage(url)
+
+# Assemble word count report & save
+report += unique_word_report(soup)
+save_report(report,'Report')
+
 
 input("press enter to end script.")
