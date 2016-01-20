@@ -59,13 +59,13 @@ def unique_word_report(soup):
 		# output += "%s: %s\n" %(entry[1],entry[0])
 
 	return output
-	
 def word_count_report(soup):
 	words = list_words(soup)
 	output = "total word count: %s\n" % len(words)
 	return output
 
 def hyperlink_report(soup):
+
 
 # Setup
 url = input("enter URL to analyse: ")
