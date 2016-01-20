@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
 import urllib.request
-from urllib.parse import urlparse
-from urllib.parse import urljoin
-from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 import re
 import pickle
@@ -18,6 +15,7 @@ def loadpage(url):
 		response = urllib.request.urlopen(url)
 		return BeautifulSoup(response.read(),'html.parser')
 	print("Request failed: URL must include a scheme (eg 'http://', 'https://' or 'file://') and path (eg '/mysite').")
+
 
 def save_report(text,filename):
 	filename += '.txt'
@@ -42,9 +40,10 @@ def list_words(soup):
 def getKey(item):
 	return item[1]
 
-def word_frequency_report(soup):
+def unique_word_report(soup):
 	wordlst = list_words(soup)
 	worddict = {}
+	output = "Unique word report\n------------------\r\n"
 
 	for word in wordlst:
 		word = word.lower()
@@ -53,7 +52,7 @@ def word_frequency_report(soup):
 		else:
 			worddict[word] = 1
 	
-	output = "Total unique word count: %s\r\n" % len(worddict)
+	output += "Total unique word count: %s\r\n" % len(worddict)
 	
 	tuplelst = worddict.items()
 	tuplelst = sorted(tuplelst, key = getKey, reverse = True)
@@ -69,18 +68,15 @@ def word_count_report(soup):
 	return output
 
 def hyperlink_report(soup):
-	
-	
+
 # Setup
 url = input("enter URL to analyse: ")
-report = "Web page report: %s\r\n" % url
+report = "Web page report: %s\n" % url
 soup = loadpage(url)
-if soup:
-	# Assemble word count report & save
-	report += hyperlink_report(soup)
-	report += word_count_report(soup)
-	report += word_frequency_report(soup)
-	save_report(report,'Report')
+
+# Assemble word count report & save
+report += unique_word_report(soup)
+save_report(report,'Report')
 
 
 input("press enter to end script.")
