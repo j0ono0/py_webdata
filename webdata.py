@@ -59,7 +59,7 @@ def unique_word_report(soup):
 		# output += "%s: %s\n" %(entry[1],entry[0])
 
 	return output
-<<<<<<< HEAD
+
 	
 def word_count_report(soup):
 	words = list_words(soup)
@@ -67,8 +67,7 @@ def word_count_report(soup):
 	return output
 
 def hyperlink_report(soup):
-=======
->>>>>>> parent of 277f373... added/improved link reporting
+
 
 # Setup
 url = input("enter URL to analyse: ")
