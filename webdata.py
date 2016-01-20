@@ -10,13 +10,11 @@ import linktools as link
 
 # Return HTML page as BeautifulSoup obj
 def loadpage(url):
-	parts = urlparse(url)
-	if(parts[0] != "" and [2] != ""):
-		response = urllib.request.urlopen(url)
-		return BeautifulSoup(response.read(),'html.parser')
-	print("Request failed: URL must include a scheme (eg 'http://', 'https://' or 'file://') and path (eg '/mysite').")
-
-
+	if url[0:7] != 'http://' and url[0:8] != 'https://':
+		url = 'http://' + url
+	response = urllib.request.urlopen(url)
+	return BeautifulSoup(response.read(),'html.parser')
+	
 def save_report(text,filename):
 	filename += '.txt'
 	cwd = os.getcwd()
@@ -61,6 +59,7 @@ def unique_word_report(soup):
 		# output += "%s: %s\n" %(entry[1],entry[0])
 
 	return output
+<<<<<<< HEAD
 	
 def word_count_report(soup):
 	words = list_words(soup)
@@ -68,6 +67,8 @@ def word_count_report(soup):
 	return output
 
 def hyperlink_report(soup):
+=======
+>>>>>>> parent of 277f373... added/improved link reporting
 
 # Setup
 url = input("enter URL to analyse: ")
