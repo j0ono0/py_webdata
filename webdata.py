@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# this is the working version!
+
 import urllib.request
 from urllib.parse import urlparse
 from urllib.parse import urljoin
