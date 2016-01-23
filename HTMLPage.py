@@ -10,28 +10,38 @@ class HTMLPage:
 	
 	def __init__(self,url):
 		self.url = url
-		self.soup = self.getsoup(self.url)
-		self.links = self.findlinks() 
+		self.soup = self.load(url)
+		self.links = self.findlinks(self.soup) 
 	
-	def getsoup(self,url):
-		parts = urlparse(url)
-		if(parts[0] != "" and [2] != ""):
+	def load(self,url,returnsoup = True):
+		try:
 			response = urllib.request.urlopen(url)
-			return BeautifulSoup(response.read(),'html.parser')
-		print("Request failed: URL must include a scheme (eg 'http://', 'https://' or 'file://') and path (eg '/mysite').")
+			if returnsoup == True:
+				return BeautifulSoup(response.read(),'html.parser')
+			else:
+				return response.read()
+		except:
+			return None
+				
+	def makesoup(self,page):
+		if page == None:
+			return None
+		return BeautifulSoup(page,'html.parser')
 			
-	def findlinks(self):
-		links = self.soup.find_all('a')
+	def findlinks(self,soup):
+		links = soup.find_all('a')
 		for i,link in enumerate(links):
 			links[i] = urljoin(self.url,link['href']) #convert all links into absolute urls
 		return links
 
 	def linkstatus(self,url):
-		try:
-			response = urllib.request.urlopen(url)
-			return True
-		except:
-			return False
+		# urlparse scheme='http', netloc='www.cwi.nl:80', path='/%7Eguido/Python.html', params='', query='', fragment=''
+		soup = self.load(url)
+		if soup:
+			frag = urlparse(url)[5]
+			if frag == '' or soup.find(id = frag) or soup.find(name = frag):
+				return True
+		return False
 			
 	def linkreport(self,links):
 		report = {'on':0,'off':0}
@@ -44,31 +54,5 @@ class HTMLPage:
 	
 # testing
 page = HTMLPage('file:///C:/Users/John/Documents/Projects/py_webdata/testsite/page.html')
-print(len(page.links))
-print(page.linkreport(page.links))
-
-'''----------------------------
-def link_exists(url):
-	# Does not ensure bookmark exists on page
-		try:
-			response = urllib.request.urlopen(url)
-			print("Win: ",url)
-		except:
-			print("Fail: ",url)
-	
-	anchor_types = {'internal':0,'external':0,'bookmarks':0}
-	anchors = soup.find_all("a")
-	output = "Number of links on page: %s\n" % (len(anchors))
-	for anchor in anchors:
-		href = urljoin(url,anchor['href']) #extract href and convert into absolute path
-		link_exists(href)
-		if(is_bookmark(url,href)):
-			anchor_types['bookmarks'] += 1
-		elif(is_internallink(url,href)):
-			anchor_types['internal'] += 1
-		else:
-			anchor_types['external'] += 1
-
-	print(anchor_types)
-	return output
-	-------------------------------------------'''
+print("link count: ",len(page.links))
+print("link status: ",page.linkreport(page.links))
