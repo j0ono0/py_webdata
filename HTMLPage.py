@@ -5,28 +5,31 @@ from urllib.parse import urlparse
 from urllib.parse import urljoin
 from urllib.error import HTTPError
 from bs4 import BeautifulSoup
+import re
 
+''' 
+TO DO:
+* multi threading for loading pages
+* request gzip pages from server to save download size
+'''
 class HTMLPage:
 	
 	def __init__(self,url):
 		self.url = url
 		self.soup = self.load(url)
-		self.links = self.findlinks(self.soup) 
+		self.links = self.findlinks(self.soup)
+		self.words = self.listwords(self.soup)
 	
 	def load(self,url,returnsoup = True):
 		try:
 			response = urllib.request.urlopen(url)
-			if returnsoup == True:
+			# Ensure B'soup is only give html pages
+			if returnsoup == True and'text/html' in response.info()['Content-type']:
 				return BeautifulSoup(response.read(),'html.parser')
 			else:
 				return response.read()
 		except:
 			return None
-				
-	def makesoup(self,page):
-		if page == None:
-			return None
-		return BeautifulSoup(page,'html.parser')
 			
 	def findlinks(self,soup):
 		links = soup.find_all('a')
@@ -42,17 +45,23 @@ class HTMLPage:
 			if frag == '' or soup.find(id = frag) or soup.find(name = frag):
 				return True
 		return False
-			
-	def linkreport(self,links):
+	
+	def listwords(self,soup):
+	# return a list of all words that *display* on the webpage
+		[tag.extract() for tag in soup(['head','script'])]
+		text = re.sub('\W', ' ', soup.get_text(' '))
+		text = re.sub(" {1,}", " ", text)
+		return text.split(" ")	
+		
+	def linkreport(self):
 		report = {'on':0,'off':0}
-		for link in links:
+		for link in self.links:
 			if self.linkstatus(link):
 				report['on'] += 1
 			else:
 				report['off'] += 1
 		return report
 	
-# testing
-page = HTMLPage('file:///C:/Users/John/Documents/Projects/py_webdata/testsite/page.html')
-print("link count: ",len(page.links))
-print("link status: ",page.linkreport(page.links))
+	def spellcheck(self,wordlist):
+		lst = []
+		return lst
