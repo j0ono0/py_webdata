@@ -19,6 +19,7 @@ class HTMLPage:
 		self.soup = self.load(url)
 		self.links = self.findlinks(self.soup)
 		self.words = self.listwords(self.soup)
+		self.images = self.findimages(self.soup)
 	
 	def load(self,url,returnsoup = True):
 		try:
@@ -62,6 +63,7 @@ class HTMLPage:
 				report['off'] += 1
 		return report
 	
-	def spellcheck(self,wordlist):
-		lst = []
-		return lst
+	def findimages(self,soup):
+		imglst = []
+		return soup.find_all('img')
+	
