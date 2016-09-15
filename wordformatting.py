@@ -1,4 +1,6 @@
 
+# Convert owl2-lwl list into a pickled list of just words
+
 import pickle
 
 def pickle_lst():

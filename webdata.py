@@ -37,17 +37,23 @@ def word_frequency_report(wordlst):
 	for entry in tuplelst:
 		output += "%s: %s\n" %(entry[1],entry[0])
 	return output
-
+''' in wordsmith module ---------------
 def spellcheck(wordlst):
 	with open('vocab.pickle','rb') as f:
 		vocab = pickle.load(f)
 	notwords = []
 	for word in wordlst:
 		word = word.lower()
-		if word not in vocab:
+		if word not in vocab and not isnumber(word) :
 			notwords.append(word)
 	return notwords
-
+'''
+def isnumber(string):
+    try:
+        float(string)
+    except ValueError:
+        return False
+    return True
 	
 def imagecheck(img):
 	def hascontent(str):
@@ -85,9 +91,7 @@ def imagecheck(img):
 				print('Title text not in vocab: ',badwords)
 	else:
 		print('ATTN!: image must have alt or title content')
-		
 
-	
 
 def imagereport(images):
 	data = {
