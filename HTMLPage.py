@@ -13,12 +13,11 @@ TO DO:
 * request gzip pages from server to save download size
 '''
 class HTMLPage:
-    
     def __init__(self,url):
         self.url = url
         self.soup = self.load(url)
         self.links = self.findlinks(self.soup)
-        self.images = self.findimages(self.soup)
+        self.images = self.soup.find_all('img')
     
     def load(self,url,returnsoup = True):
         try:
@@ -56,12 +55,12 @@ class HTMLPage:
     # TO DO: DRY the function. 
     # NLTK = dedicated python module, probably a better way to tonkenize the strings to words!
     def gettext(self, *args):
-        lst = [] 
+        lst = []
         if len(args) is 0:
         # Return all text that diplays on the page
             tags = self.soup.findAll(self.visibletext)
             for tag in tags:
-                lst += re.sub("[^\w]"," ", tag.string).split(" ")
+                lst += re.sub("\s\s+"," ", tag.string).split(" ")
             return lst
         else:
         # Return text from requested tags
@@ -70,7 +69,7 @@ class HTMLPage:
                     for string in tagsoup.stripped_strings:
                         lst += string.split(' ')                        
             return lst
-            
+
     def linkreport(self):
         report = {'on':0,'off':0}
         for link in self.links:
@@ -79,8 +78,20 @@ class HTMLPage:
             else:
                 report['off'] += 1
         return report
-    
-    def findimages(self,soup):
-        imglst = []
-        return soup.find_all('img')
-    
+
+    def attr_data(self,tag,*args):
+        tags = self.soup.find_all(tag)
+        data = {
+            'head':[],
+            'body':[[] for i in range(len(tags))],
+        }
+        for i, arg in enumerate(args):
+            data['head'].append(arg)
+            for j, tag in enumerate(tags):
+                if arg == 'content':
+                    value = tag.text
+                else:
+                    value = tag[arg] if tag.has_attr(arg) else ""
+                data['body'][j].append(value)
+        return data
+        

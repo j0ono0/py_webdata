@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% import 'tables.html' as tables %}
+
+{% block head %}
+    <style>
+        table{
+            border-collapse: collapse;
+        }
+        td{
+            border: 1px solid #ccc;
+            padding: .25em .5em;
+        }
+    </style>
+{% endblock %}
+
+{%  block body %}
+    <h1>Report</h1>
+    <h2>Image attributes</h2>
+    {{ tables.table(imgdata,'column-centric','True') }}
+    <h2>Link attributes</h2>
+    {{ tables.table(linkdata,'column-centric','True') }}
+{% endblock %}
+

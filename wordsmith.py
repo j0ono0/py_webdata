@@ -42,16 +42,15 @@ class wordsmith:
         
     def keyword_density(self):
         # List all repeated words and their frequency
-        allwords = []
         keywords = {}
         for word in self.wordlst:
             word = word.lower()
             if word in keywords.keys():
                 keywords[word] += 1
-            elif word in allwords:
-                keywords[word] = 2
             else:
-                allwords.append(word)
+                keywords[word] = 1
         tuplelst = keywords.items()
         tuplelst = sorted(tuplelst, key = self.getkey, reverse = True)
         return tuplelst
+         
+    

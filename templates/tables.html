@@ -1,0 +1,22 @@
+{% macro table(data,class,header) %}
+    <table class="{{ class }}">
+    {% if data.head %}
+        <thead>
+            <tr>
+            {% for cell in data.head %}
+                <th>{{ cell }}</th>
+            {% endfor %}
+            </tr>
+        </thead>
+    {% endif %}
+    <tbody>
+    {% for row in data.body %}
+        <tr>
+        {% for cell in row %}
+            <td>{{ cell }}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% endmacro %}
