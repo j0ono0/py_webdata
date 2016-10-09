@@ -35,18 +35,23 @@ def keyword_report():
     print(alltext.keyword_density())
 
 
+# Create a page object
+page = HTMLPage(url)
 
-page = HTMLPage(url)   # Create a page object
-imgdata = page.attr_data('img','src','alt','title')
-linkdata = page.attr_data('a','content','href','id','class')
-
+# get some table data from page
+imgdata = page.tag_data('img','src','validate-src','alt','title')
+linkdata = page.tag_data('a','content','href','validate-href','id','class')
 env = Environment(loader = FileSystemLoader('templates'))
+
+# setup Jinja2 environment
 template = env.get_template('report.html')
 fname = 'image-report.html'
 context = {
     'imgdata':imgdata,
     'linkdata':linkdata
 }
+
+# output report
 with open(os.path.join('reports',fname),'w') as f:
     f.write(template.render(context))
 print('document \'%s\' created.' % fname)

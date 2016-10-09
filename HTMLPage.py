@@ -3,7 +3,7 @@
 import urllib.request
 from urllib.parse import urlparse
 from urllib.parse import urljoin
-from urllib.error import HTTPError
+from urllib.error import URLError
 from bs4 import BeautifulSoup
 import re
 
@@ -78,8 +78,22 @@ class HTMLPage:
             else:
                 report['off'] += 1
         return report
-
-    def attr_data(self,tag,*args):
+        
+    def resource_exists(self,url):
+        url = urljoin(self.url, url)
+        try:
+            res = urllib.request.urlopen(url)
+            return True
+        except URLError as e:
+            pass
+        return False
+    
+    # Collate data relating to a tag and return findings
+    # arguments include all potential tag attributes plus the following special ones:
+    # content: returns the content of the tag
+    # validate-src: tests whether the src loads
+    # validate-href: tests whether the href loads
+    def tag_data(self,tag,*args):
         tags = self.soup.find_all(tag)
         data = {
             'head':[],
@@ -90,6 +104,10 @@ class HTMLPage:
             for j, tag in enumerate(tags):
                 if arg == 'content':
                     value = tag.text
+                elif arg == 'validate-href':
+                    value = '&#x2713;' if self.resource_exists(tag['href']) else '&#x2715;'
+                elif arg == 'validate-src':
+                    value = '&#x2713;' if self.resource_exists(tag['src']) else '&#x2715;'
                 else:
                     value = tag[arg] if tag.has_attr(arg) else ""
                 data['body'][j].append(value)
