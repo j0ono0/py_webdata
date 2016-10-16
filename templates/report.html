@@ -10,6 +10,26 @@
             border: 1px solid #ccc;
             padding: .25em .5em;
         }
+        table.inline{
+            width: 100%
+        }
+        .inline tbody{
+            width:100%
+        }
+        .inline tr{
+            display: inline;
+            padding-right: 3px;
+        }
+        .inline td:first-child:before{
+            content:"[";
+        }
+        .inline td:first-child:after{
+            content:"]";
+        }
+        .inline td{
+            border: none;
+            padding: inherit;
+        }
     </style>
 {% endblock %}
 
@@ -19,5 +39,9 @@
     {{ tables.table(imgdata,'column-centric','True') }}
     <h2>Link attributes</h2>
     {{ tables.table(linkdata,'column-centric','True') }}
+    <h2>Words not in vocab</h2>
+    <p>{% for word in misspelt %}{{ word }}, {% endfor %}</p> 
+    <h2>Keyword density</h2>
+    {{ tables.table(keyworddata,'inline inline--note-text','True') }}
 {% endblock %}
 

@@ -60,7 +60,7 @@ class HTMLPage:
         # Return all text that diplays on the page
             tags = self.soup.findAll(self.visibletext)
             for tag in tags:
-                lst += re.sub("\s\s+"," ", tag.string).split(" ")
+                lst += re.sub("[^a-zA-Z0-9]+"," ", tag.string).split(" ")
             return lst
         else:
         # Return text from requested tags
@@ -88,7 +88,7 @@ class HTMLPage:
             pass
         return False
     
-    # Collate data relating to a tag and return findings
+    # Collate data relating to a tag
     # arguments include all potential tag attributes plus the following special ones:
     # content: returns the content of the tag
     # validate-src: tests whether the src loads

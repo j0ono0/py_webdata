@@ -8,7 +8,7 @@ import os
 url = 'file:///C:/Users/John/Documents/Projects/py_webdata/testsite/page.html'
 url2 = 'http://johnnewall.com'
 url3 = 'http://www.unisa.edu.au/Study-at-UniSA/'
-url4 = 'http://johnnewall.com/articles/case-study-staff-profile-pages/'
+url4 = 'http://johnnewall.com/articles/svg-graphics-perfect-for-non-proportional-scaling/'
 
 
 def test_page_vocab():
@@ -43,12 +43,21 @@ imgdata = page.tag_data('img','src','validate-src','alt','title')
 linkdata = page.tag_data('a','content','href','validate-href','id','class')
 env = Environment(loader = FileSystemLoader('templates'))
 
+#get some wordsmith data
+ws = wordsmith(page.gettext())
+keyworddata = {
+    'head':['count','word'],
+    'body': ws.keyword_density()
+}
+misspelt = ws.invocab(False)
 # setup Jinja2 environment
 template = env.get_template('report.html')
 fname = 'image-report.html'
 context = {
     'imgdata':imgdata,
-    'linkdata':linkdata
+    'linkdata':linkdata,
+    'keyworddata':keyworddata,
+    'misspelt':misspelt
 }
 
 # output report

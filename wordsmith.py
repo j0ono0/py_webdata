@@ -23,10 +23,6 @@ class wordsmith:
             return False
         return True
     
-    # Help sorting dicts converted to tuples by keys
-    def getkey(self,item):
-        return item[1]
-    
     # match words from self.wordlst to words in self.vocab 
     # Defaults to returning positive matches. Setting arg to False returns words not in vocab
     # the latter may indicate a misspelt word
@@ -41,7 +37,11 @@ class wordsmith:
         return words
         
     def keyword_density(self):
-        # List all repeated words and their frequency
+    # List all repeated words and their frequency
+        # Help sorting dicts converted to tuples by keys
+        def getkey(item):
+            return item[0]
+    
         keywords = {}
         for word in self.wordlst:
             word = word.lower()
@@ -49,8 +49,10 @@ class wordsmith:
                 keywords[word] += 1
             else:
                 keywords[word] = 1
-        tuplelst = keywords.items()
-        tuplelst = sorted(tuplelst, key = self.getkey, reverse = True)
-        return tuplelst
+        keywordlst = []
+        for key in keywords:
+            keywordlst.append([keywords[key],key])
+        keywordlst = sorted(keywordlst, key = getkey, reverse = True)
+        return keywordlst
          
     
